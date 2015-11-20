@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
 
   s.author       = { "xx-li" => "x@devlxx.com" }
  
-  s.platform     = :ios, '7.0'
+  s.platform     = :ios, '6.0'
 
   s.source       = { :git => "https://github.com/xx-li/LXEmojiKeyboardInput.git", :tag => "0.1" }
 
@@ -24,10 +24,7 @@ Pod::Spec.new do |s|
   s.exclude_files = 'LXEmojiKeyboardInputDemo'
 
   s.frameworks = 'Foundation', 'CoreGraphics', 'UIKit'
-
   s.requires_arc = true
-
-  # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
   s.dependency 'Masonry', '~> 0.6.3'
 
 end
