@@ -9,8 +9,6 @@
 #import "LXGrowingInputView.h"
 #import <Masonry.h>
 
-
-
 @interface LXGrowingInputView()<UITextViewDelegate>
 
 @property (assign, nonatomic) CGFloat contentHeight;

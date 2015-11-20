@@ -16,11 +16,11 @@ Pod::Spec.new do |s|
 
   s.author       = { "xx-li" => "x@devlxx.com" }
  
-  s.platform     = :ios, '6.0'
+  s.platform     = :ios, '7.0'
 
   s.source       = { :git => "https://github.com/xx-li/LXEmojiKeyboardInput.git", :tag => "0.1" }
 
-  s.source_files  = 'LXEmojiKeyboardInput/*', 'LXEmojiKeyboardInput/**/*.{h,m}'
+  s.source_files  = 'LXEmojiKeyboardInput/*'
   s.exclude_files = 'LXEmojiKeyboardInputDemo'
 
   s.frameworks = 'Foundation', 'CoreGraphics', 'UIKit'
