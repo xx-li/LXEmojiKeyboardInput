@@ -7,7 +7,7 @@
 //
 
 #import "LXGrowingInputView.h"
-#import <Masonry.h>
+#import <Masonry/Masonry.h>
 
 @interface LXGrowingInputView()<UITextViewDelegate>
 
