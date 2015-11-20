@@ -22,9 +22,10 @@ Pod::Spec.new do |s|
 
   s.source_files  = 'LXEmojiKeyboardInput/*'
   s.exclude_files = 'LXEmojiKeyboardInputDemo'
-  s.resource_bundles = {  
-    'LXEmojiKeyboardInput' => ['Pod/**/**']
-  }
+  s.resource_bundle = { 'LXEmojiKeyboardInput' => 'LXEmojiKeyboardInput/LXEmojiKeyboardInput/**' }
+
+  s.resource = "LXEmojiKeyboardInput/LXEmojiKeyboardInput.bundle"
+
 
   s.frameworks = 'Foundation', 'CoreGraphics', 'UIKit'
   s.requires_arc = true
