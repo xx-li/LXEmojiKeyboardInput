@@ -8,26 +8,14 @@
 
 #import "LXEmojiKeyboardView.h"
 
-//4行6列
-#define EMOJI_DEFAULT_ROW  4
-#define EMOJI_DEFAULT_COLUMN 6
-
-//emoji表情与底部的间距
-#define Emoji_Bottom_Edge_Spacing 30
-
-//emoji表情与水平两边的间距
-#define Emoji_horizontal_Edge_Spacing 10
-
 @interface LXEmojiKeyboardView ()<UIScrollViewDelegate>  {
-    UIScrollView * _scrollView;
-    UIPageControl * _pageControl;
     NSInteger _pageCount;
     CGSize _oldLayoutSize;
 }
 
 @property (strong, nonatomic, readonly) NSArray * allEmojis;
 @property (strong, nonatomic, readonly) NSArray * allButtons;
-
+@property (strong, nonatomic, readonly) NSBundle * assetBundle;
 
 @end
 
@@ -42,6 +30,20 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        _assetBundle = [NSBundle bundleForClass:[self class]];
+        NSString *bundlePath = [self.assetBundle pathForResource:@"LXEmojiKeyboardInput" ofType:@"bundle"];
+        if (bundlePath) {
+            _assetBundle = [NSBundle bundleWithPath:bundlePath];
+        }
+        
+        self.deleteNormalImage = [UIImage imageWithContentsOfFile:[self.assetBundle pathForResource:@"emoji_del_btn_nor@2x" ofType:@"png"]];
+        self.deleteHlightedImage = [UIImage imageWithContentsOfFile:[self.assetBundle pathForResource:@"emoji_del_btn_hl@2x" ofType:@"png"]];
+        self.rowCount = 4;
+        self.columnCount = 6;
+        self.bottomEdgeSpacing = 30;
+        self.horizontalEdgeSpacing = 10;
+        
+
         UIScrollView * scrollView = [[UIScrollView alloc] init];
         scrollView.bounces = NO;
         scrollView.pagingEnabled = YES;
@@ -121,9 +123,17 @@
 }
 
 #pragma mark - Setter and getter
+
+//- (void)setDelBtnImage:(UIImage *)delBtnImage {
+//    if (_delBtnImage == delBtnImage) {
+//        return;
+//    }
+//    _delBtnImage = delBtnImage;
+//}
+
 - (NSInteger) getPageCount:(NSInteger)emojiCount {
     //每页最后有一个删除按钮
-    NSInteger pageEmojiCount = EMOJI_DEFAULT_ROW * EMOJI_DEFAULT_COLUMN - 1;
+    NSInteger pageEmojiCount = self.rowCount * self.columnCount - 1;
     
     return (emojiCount / pageEmojiCount) + (emojiCount % pageEmojiCount == 0 ? 0 : 1);
 }
@@ -131,9 +141,9 @@
 //从本地Emoji.plist文件获取显示的emoji
 - (NSArray *)allEmojis {
     if (!_allEmojis) {
-        NSString * emojiPath = [[NSBundle mainBundle] pathForResource:@"LXEmojiKeyboardInput.bundle/Emoji" ofType:@"plist"];
+        NSString * emojiPath = [self.assetBundle pathForResource:@"Emoji" ofType:@"plist"];
         NSDictionary * dic = [NSDictionary dictionaryWithContentsOfFile:emojiPath];
-        return [dic objectForKey:@"People"];
+        _allEmojis = [dic objectForKey:@"People"];
     }
     return _allEmojis;
 }
@@ -145,7 +155,7 @@
         //页数
         NSInteger pageCount = [self getPageCount:emojis.count];
         //每页按钮的最大个数
-        NSInteger pageBtnCount = EMOJI_DEFAULT_ROW * EMOJI_DEFAULT_COLUMN;
+        NSInteger pageBtnCount = self.rowCount * self.columnCount;
         NSMutableArray * array = [NSMutableArray arrayWithCapacity:emojis.count];
         for (int i = 0; i < pageCount; i ++) {
             for (int j = 0; j < pageBtnCount; j ++) {
@@ -168,8 +178,8 @@
                     [btn addTarget:self action:@selector(emojiButtonClick:) forControlEvents:UIControlEventTouchUpInside];
                 }
                 else {
-                    [btn setImage:[UIImage imageNamed:@"LXEmojiKeyboardInput.bundle/emoji_del_btn_hl"] forState:UIControlStateHighlighted];
-                    [btn setImage:[UIImage imageNamed:@"LXEmojiKeyboardInput.bundle/emoji_del_btn_nor"] forState:UIControlStateNormal];
+                    [btn setImage:self.deleteHlightedImage forState:UIControlStateHighlighted];
+                    [btn setImage:self.deleteNormalImage forState:UIControlStateNormal];
                     [btn addTarget:self action:@selector(deleteButtonClick:) forControlEvents:UIControlEventTouchUpInside];
                 }
                 
@@ -220,20 +230,20 @@
     
     CGFloat width = CGRectGetWidth(self.bounds);
     CGFloat height = CGRectGetHeight(self.bounds);
-    CGFloat buttonWidht = (width - Emoji_horizontal_Edge_Spacing * 2) / EMOJI_DEFAULT_COLUMN;
-    CGFloat buttonHeight = (height - Emoji_Bottom_Edge_Spacing) / EMOJI_DEFAULT_ROW;
+    CGFloat buttonWidht = (width - self.horizontalEdgeSpacing * 2) / self.columnCount;
+    CGFloat buttonHeight = (height - self.bottomEdgeSpacing) / self.rowCount;
     
     for (int i = 0; i < pageCount; i ++) {
-        for (int j = 0; j < EMOJI_DEFAULT_ROW; j ++) {
-            for (int k = 0; k < EMOJI_DEFAULT_COLUMN; k ++) {
+        for (int j = 0; j < self.rowCount; j ++) {
+            for (int k = 0; k < self.columnCount; k ++) {
                 
-                NSInteger buttonIndex = k + (EMOJI_DEFAULT_COLUMN * j) + (i * EMOJI_DEFAULT_ROW * EMOJI_DEFAULT_COLUMN);
+                NSInteger buttonIndex = k + (self.columnCount * j) + (i * self.rowCount * self.columnCount);
                 if (buttonIndex >= buttons.count) {
                     break;
                 }
                 UIButton * btn = buttons[buttonIndex];
                 
-                CGFloat buttonX = Emoji_horizontal_Edge_Spacing + buttonWidht * k + i * width;
+                CGFloat buttonX = self.horizontalEdgeSpacing + buttonWidht * k + i * width;
                 CGFloat buttonY = buttonHeight * j;
                 btn.frame = CGRectMake(buttonX, buttonY, buttonWidht, buttonHeight);
                 

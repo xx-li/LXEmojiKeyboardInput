@@ -13,13 +13,13 @@
 
 @property (assign, nonatomic) CGFloat contentHeight;
 
-@property (nonatomic, strong) UIButton *leftButton;
-@property (nonatomic, strong) UIButton *rightButton;
+
+@property (strong, nonatomic, readonly) NSBundle * assetBundle;
 
 @end
 
 @implementation LXGrowingInputView
-@synthesize textView = _textView;
+@synthesize textView = _textView, leftButton = _leftButton, rightButton = _rightButton;
 
 #pragma mark - Life cycle
 - (instancetype)initWithFrame:(CGRect)frame
@@ -52,6 +52,12 @@
 
 - (void)commonInit
 {
+    _assetBundle = [NSBundle bundleForClass:[self class]];
+    NSString *bundlePath = [self.assetBundle pathForResource:@"LXEmojiKeyboardInput" ofType:@"bundle"];
+    if (bundlePath) {
+        _assetBundle = [NSBundle bundleWithPath:bundlePath];
+    }
+
     _keyboardType = LXKeyboardTypeDefault;
     
     [self addSubview:self.leftButton];
@@ -63,7 +69,8 @@
 
 - (void) setupViewConstraints {
     
-    UIImageView * bgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LXEmojiKeyboardInput.bundle/inputview_background"]];
+    UIImage * bgImage = [UIImage imageWithContentsOfFile:[self.assetBundle pathForResource:@"inputview_background@2x" ofType:@"png"]];
+    UIImageView * bgView = [[UIImageView alloc] initWithImage:bgImage];
     [self addSubview:bgView];
     [self sendSubviewToBack:bgView];
 
@@ -132,8 +139,10 @@
     if (!_leftButton)
     {
         _leftButton = [[UIButton alloc] init];
-        [_leftButton setImage:[UIImage imageNamed:@"LXEmojiKeyboardInput.bundle/keyboard_btn_default"] forState:UIControlStateNormal];
-        [_leftButton setImage:[UIImage imageNamed:@"LXEmojiKeyboardInput.bundle/keyboard_btn_emoji"] forState:UIControlStateSelected];
+        UIImage * norImage = [UIImage imageWithContentsOfFile:[self.assetBundle pathForResource:@"keyboard_btn_default@2x" ofType:@"png"]];
+        UIImage * hlImage = [UIImage imageWithContentsOfFile:[self.assetBundle pathForResource:@"keyboard_btn_emoji@2x" ofType:@"png"]];
+        [_leftButton setImage:norImage forState:UIControlStateNormal];
+        [_leftButton setImage:hlImage forState:UIControlStateSelected];
         _leftButton.translatesAutoresizingMaskIntoConstraints = NO;
         _leftButton.titleLabel.font = [UIFont systemFontOfSize:15.0];
         [_leftButton addTarget:self action:@selector(keyboardTypeChangeButtonClick:) forControlEvents:UIControlEventTouchUpInside];

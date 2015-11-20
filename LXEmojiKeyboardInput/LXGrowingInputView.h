@@ -28,10 +28,14 @@ typedef NS_ENUM(NSInteger, LXKeyboardType) {
 
 @interface LXGrowingInputView : UIView
 
+@property (nonatomic, strong, readonly) UIButton *leftButton;
+@property (nonatomic, strong, readonly) UIButton *rightButton;
 @property (nonatomic, strong, readonly) UITextView *textView;
 
 @property (weak, nonatomic) id<LXGrowingInputViewDelegate> delegate;
 
 @property (assign, nonatomic, readonly) LXKeyboardType keyboardType;
+
+
 
 @end
